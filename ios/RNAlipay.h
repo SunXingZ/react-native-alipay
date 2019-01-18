@@ -8,7 +8,5 @@
 
 @interface RNAlipay : NSObject <RCTBridgeModule>
 
-@property (nonatomic, copy) RCTPromiseResolveBlock payOrderComplete;
-
 @end
   

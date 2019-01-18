@@ -1,14 +1,16 @@
 
 #import "RNAlipay.h"
 
+static RCTPromiseResolveBlock _payOrderComplete;
+
 @implementation RNAlipay
 
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(payOrder:(NSString *)orderParams callback:(RCTResponseSenderBlock)callback) {
-    self.payOrderComplete = callback;
-    [[AlipaySDK defaultService] payOrder:orderParams fromScheme: [self getAlipayUrlScheme] callback:^(NSDictionary *resultDic) {
-        
+    _payOrderComplete = callback;
+    [[AlipaySDK defaultService] payOrder:orderParams fromScheme: [self getAlipayUrlScheme] callback:^(NSDictionary *result) {
+        _payOrderComplete(@[result]);
     }];
 }
 
@@ -45,14 +47,11 @@ RCT_EXPORT_METHOD(payOrder:(NSString *)orderParams callback:(RCTResponseSenderBl
     NSString *urlString = notification.userInfo[@"url"];
     NSURL *url = [NSURL URLWithString:urlString];
     if ([url.host isEqualToString:@"safepay"]) {
-        __weak __typeof__(self) _self = self;
         [[AlipaySDK defaultService] processOrderWithPaymentResult:url standbyCallback:^(NSDictionary *result){
-            if (_self.payOrderComplete) {
-                _self.payOrderComplete(result);
-                _self.payOrderComplete = nil;
-            }
+            _payOrderComplete(@[result]);
         }];
     }
 }
 
 @end
+
