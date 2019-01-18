@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.WritableMap;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class RNAlipayModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void payOrder(final String orderStr, final Promise promise) {
+  public void payOrder(final String orderStr, final Callback callback) {
     Runnable payRunnable = new Runnable() {
       @Override
       public void run() {
@@ -35,7 +36,7 @@ public class RNAlipayModule extends ReactContextBaseJavaModule {
         Map<String, String> result = alipay.payV2(orderStr, true);
         for (Map.Entry<String, String> entry : result.entrySet())
         map.putString(entry.getKey(), entry.getValue());
-        promise.resolve(map);
+        callback.invoke(map);
       }
     };
     Thread payThread = new Thread(payRunnable);
