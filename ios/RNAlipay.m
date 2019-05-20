@@ -7,9 +7,9 @@ static RCTPromiseResolveBlock _payOrderComplete;
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(payOrder:(NSString *)orderParams callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(payOrder:(NSString *)orderParams scheme:(NSString *)orderScheme callback:(RCTResponseSenderBlock)callback) {
     _payOrderComplete = callback;
-    [[AlipaySDK defaultService] payOrder:orderParams fromScheme: [self getAlipayUrlScheme] callback:^(NSDictionary *result) {
+    [[AlipaySDK defaultService] payOrder:orderParams fromScheme: orderScheme callback:^(NSDictionary *result) {
         _payOrderComplete(@[result]);
     }];
 }
